@@ -42,6 +42,11 @@ public class Teacher {
     public UserInfo getUserInfo() {
         return userInfo;
     }
+    
+    @Override
+	public String toString() {
+		return "["+iD+","+teacherIndate+","+userInfo+"]";
+	}
 }
 
 

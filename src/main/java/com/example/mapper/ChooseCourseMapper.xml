@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.ChooseCourseMapper">
+
+
+<!-- 选课 
+    private Integer iD;
+    private Course course;
+    private Student student;
+    -->
+<insert id="insertChooseCourse" parameterType="chooseCourse">
+<selectKey keyProperty="iD" order="AFTER" resultType="int">
+SELECT LAST_INSERT_ID()
+</selectKey>
+<if test="student!=null and course!=null">
+INSERT INTO choose_course(course_id,student_id) VALUES(#{course.iD},#{student.id})
+</if>
+</insert>
+
+<!-- 删除课程 -->
+<delete id="deleteChooseCourseById" parameterType="int">
+DELETE FROM choose_course WHERE chuoose_course_id=#{value}
+</delete>
+
+<!-- 查看个人选课信息by student_id -->
+<!-- 
+学生：学号、姓名
+课程：课程号、课程名、课程介绍
+老师：姓名、职称
+ -->
+<resultMap id="ChooseCourseResultMap" type="ChooseCourse">
+<id column="choose_course_id" property="iD"/>
+<association property="student" javaType="com.example.entity.Student">
+<id column="student_id" property="id"/>
+<association property="userInfo" javaType="com.example.entity.UserInfo">
+<id column="userinfo_id" property="iD"/>
+<result column="student_name" property="userName"/>
+</association>
+</association>
+
+<association property="course" javaType="com.example.entity.Course">
+<id column="course_id" property="iD"/>
+<result column="course_name" property="courseName"/>
+<result column="course_introduction" property="courseIntroduction"/>
+<association property="teacher" javaType="com.example.entity.Teacher">
+<id column="teacher_id" property="iD"/>
+<result column="teacher_duty" property="teacherDuty"/>
+<association property="userInfo" javaType="com.example.entity.UserInfo">
+<id column="userinfo_id" property="iD"/>
+<result column="teacher_name" property="userName"/>
+</association>
+</association>
+</association>
+
+
+</resultMap>
+
+<select id="findChooseCourseListByStudentId" parameterType="int" resultMap="ChooseCourseResultMap">
+SELECT
+	choose_course_id,
+	b.student_id,
+	b.userinfo_name student_name,
+	a.course_id,
+	a.course_name,
+	a.course_introduction,
+	a.teacher_id,
+	a.userinfo_name teacher_name,
+	a.teacher_duty
+FROM
+	(
+		SELECT
+			course_id,
+			course_name,
+			course_introduction,
+			userinfo_name,
+			teacher.teacher_id,
+			teacher_duty
+		FROM
+			userinfo,
+			course,
+			teacher
+		WHERE
+			userinfo.userinfo_id = teacher.userinfo_id
+		AND teacher.teacher_id = course.teacher_id
+	) a,
+	(
+		SELECT
+			student_id,
+			userinfo_name
+		FROM
+			student,
+			userinfo
+		WHERE
+			student.userinfo_id = userinfo.userinfo_id
+	) b,
+	choose_course c
+WHERE
+	a.course_id = c.course_id
+AND b.student_id = c.student_id
+AND c.student_id=#{value}
+</select>
+
+</mapper>

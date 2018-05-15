@@ -35,5 +35,11 @@ public class User {
         this.userType = userType;
     }
 
+	@Override
+	public String toString() {
+		return "["+iD+","+userPassword+","+userType+"]";
+	}
+
+
 
 }

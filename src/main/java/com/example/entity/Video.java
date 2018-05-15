@@ -11,7 +11,13 @@ public class Video {
     private String videoTitle;
     private Exam exam;
 
-    public Integer getId() {
+    @Override
+	public String toString() {
+		
+		return "["+id+","+videoAddress+","+videoTitle+","+exam+"]";
+	}
+
+	public Integer getId() {
         return id;
     }
 

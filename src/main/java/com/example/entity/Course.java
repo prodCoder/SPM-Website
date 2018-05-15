@@ -18,7 +18,13 @@ public class Course {
     private Teacher teacher;
 
 
-    public Collection<Video> getVideo() {
+    @Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "["+iD+","+courseName+","+courseIntroduction+","+video+"teacher"+"]";
+	}
+
+	public Collection<Video> getVideo() {
         if (video == null)
             video = new HashSet<Video>();
         return video;

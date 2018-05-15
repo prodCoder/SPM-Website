@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+        <mapper namespace="com.example.mapper.CourseMapper">
+        
+        <!--     
+        private Integer iD;
+	    private String courseName;
+	    private String courseIntroduction;
+	    private Collection<Video> video;
+	    private Teacher teacher; 
+	    -->
+        <!-- 添加課程 -->
+        <insert id="insertCourse" parameterType="course">
+        <selectKey keyProperty="iD" order="AFTER" resultType="java.lang.Integer">
+        SELECT LAST_INSERT_ID()
+   	 	</selectKey>
+   	 	INSERT INTO course(course_name,course_introduction,teacher_id) 
+   	 	Values(#{courseName},#{courseIntroduction},#{teacher.iD})  	 	
+        </insert>
+        
+        
+        <!-- 刪除課程 -->
+        <delete id="deleteCourseById" parameterType="int">
+        DELETE FROM course WHERE course_id=#{value}
+        </delete>
+        
+        <!-- 修改課程 -->
+        <update id="updateCourse" parameterType="course">
+        UPDATE course
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="courseName!=null and courseName!=''">
+        course_name=#{courseName},
+        </if>
+        <if test="courseIntroduction !=null and courseIntroduction !=''">
+        course_introduction=#{courseIntroduction},
+        </if>
+        <if test="teacher!=null">
+        teacher_id=#{teacher.iD},
+        </if>
+        </trim>
+        WHERE course_id=#{iD}
+        </update>
+        
+        <!-- 將數據庫的course映射成pojo的course -->
+        <resultMap id="courseResultMap" type="course">
+        <id column="course_id" property="iD"/>
+        <result column="course_name" property="courseName"/>
+        <result column="course_introduction" property="courseIntroduction"/>
+        
+        <association property="teacher" javaType="com.example.entity.Teacher">
+        <id column="teacher_id" property="iD"/>
+        <result column="teacher_duty" property="teacherDuty"/>
+        <result column="teacher_indate" property="teacherIndate"/>
+        <association property="userInfo" javaType="com.example.entity.UserInfo">
+        <id property="iD" column="userinfo_id"/>
+		<result property="userBirth" column="userinfo_birth"/>
+		<result property="userName" column="userinfo_name"/>
+		<result property="userSex" column="userinfo_sex"/>
+		<result property="userEmail" column="userinfo_email"/>
+		<result property="userTel" column="userinfo_tel"/>
+        </association>
+        </association>
+        <!--     private Integer id;
+    private String videoAddress;
+    private String videoTitle;
+    private Exam exam -->
+        <collection property="video" ofType="com.example.entity.Video">
+        <id property="id" column="video_id"/>
+		<result property="videoTitle" column="video_title"/>
+		<result property="videoAddress" column="video_address"/>
+        </collection>
+        </resultMap>
+        <!-- 查找課程 -->
+        <select id="findCourseById" parameterType="int" resultMap="courseResultMap">
+        SELECT * FROM 
+        course,teacher,userinfo,video
+         where course.teacher_id=teacher.teacher_id
+        and teacher.userinfo_id=userinfo.userinfo_id
+        and course.course_id=video.course_id       
+        </select>
+        </mapper>

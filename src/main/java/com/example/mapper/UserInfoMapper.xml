@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.UserInfoMapper">
+
+<!-- 插入用户详细信息 -->
+<insert id="insertUserInfo" parameterType="userInfo">
+<selectKey keyProperty="iD" order="AFTER" resultType="java.lang.Integer">
+        SELECT LAST_INSERT_ID()
+</selectKey>
+INSERT INTO userinfo(userinfo_name,userinfo_sex,userinfo_email,userinfo_tel,userinfo_birth,user_id)
+values(#{userName},#{userSex},#{userEmail},#{userTel},#{userBirth},#{user.iD})
+</insert>
+
+<!-- 删除用户 -->
+<delete id="deleteUserInfoById" parameterType="int">
+DELETE FROM userinfo WHERE userinfo_id=#{id}
+</delete>
+
+<!-- 修改用户 -->
+<update id="updateUserInfo" parameterType="userInfo">
+UPDATE userinfo
+<trim prefix="SET" suffixOverrides=",">
+<if test="userName!=null and userName!=''">
+userinfo_name=#{userName},
+</if>
+<if test="userSex!=null and userSex!=''">
+userinfo_sex=#{userSex},
+</if>
+<if test="userEmail!=null and userEmail!=''">
+userinfo_email=#{userEmail},
+</if>
+<if test="userTel!=null and userTel!=''">
+userinfo_tel=#{userTel},
+</if>
+<if test="userBirth!=null and userBirth!=''">
+userinfo_birth=#{userBirth},
+</if>
+ 
+<if test="user!=null and user.iD!=null">
+user_id=#{user.iD},
+</if>
+
+</trim>
+
+WHERE userinfo_id=#{iD}
+
+</update>
+
+<resultMap id="userInfoResultMap" type="userInfo">
+<id column="userinfo_id" property="iD"/>
+<result column="userinfo_name" property="userName"/>
+<result column="userinfo_sex" property="userSex"/>
+<result column="userinfo_email" property="userEmail"/>
+<result column="userinfo_tel" property="userTel"/>
+<result column="userinfo_birth" property="userBirth"/>
+<result column="user_id" property="user.iD"/>
+</resultMap>
+
+<!-- 查询用户详细信息 -->
+<select id="findUserInfoById" parameterType="int" resultMap="userInfoResultMap">
+SELECT * FROM userinfo WHERE userinfo_id=#{value}
+</select>
+
+<!-- 条件查询用户详细信息:按名字模糊查询/按性别查询-->
+<select id="findUserInfoByCondition" parameterType="userInfo" resultMap="userInfoResultMap">
+SELECT * FROM userinfo 
+<where>
+<if test="userName!=null and userName!=''">
+AND userinfo_name like '%${userName}%'
+</if>
+<if test="userSex!=null and userSex!=''">
+AND userinfo_sex = #{userSex}
+</if>
+</where>
+</select>
+
+</mapper>

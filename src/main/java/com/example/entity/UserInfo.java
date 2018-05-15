@@ -8,11 +8,11 @@ package com.example.entity;
 
 public class UserInfo {
     private String userName;
-    private Integer userSex;
+    private String userSex;
     private String userEmail;
-    private Integer userTel;
+    private String userTel;
     private String userBirth;
-    private Integer iD;
+    private int iD;
     private User user;
 
     public String getUserName() {
@@ -23,11 +23,11 @@ public class UserInfo {
         this.userName = userName;
     }
 
-    public Integer getUserSex() {
+    public String getUserSex() {
         return userSex;
     }
 
-    public void setUserSex(Integer userSex) {
+    public void setUserSex(String userSex) {
         this.userSex = userSex;
     }
 
@@ -39,11 +39,11 @@ public class UserInfo {
         this.userEmail = userEmail;
     }
 
-    public Integer getUserTel() {
+    public String getUserTel() {
         return userTel;
     }
 
-    public void setUserTel(Integer userTel) {
+    public void setUserTel(String userTel) {
         this.userTel = userTel;
     }
 
@@ -70,4 +70,11 @@ public class UserInfo {
     public void setUser(User user) {
         this.user = user;
     }
+
+	@Override
+	public String toString() {
+		return "["+userName+","+userSex+","+userEmail+","+userTel+","+iD+","+userBirth+user+"]";
+	}
+    
+    
 }

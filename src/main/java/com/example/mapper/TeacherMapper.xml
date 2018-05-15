@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.TeacherMapper">
+
+<!--添加教师-->
+<insert id="insertTeacher" parameterType="student">
+INSERT INTO teacher(teacher_id,teacher_indate,teacher_duty,userinfo_id) 
+VALUES(#{iD},#{teacherIndate},#{teacherDuty},#{userInfo.iD})
+</insert>
+
+<!-- 删除教师 -->
+<delete id="deleteTeacherById" parameterType="int">
+DELETE FROM teacher WHERE teacher_id=#{value}
+</delete>
+
+<!-- 修改教师信息 -->
+<update id="updateTeacher" parameterType="teacher">
+UPDATE teacher 
+<trim prefix="SET" suffixOverrides=",">
+<if test="teacherIndate!=null and teacherIndate!=''">
+teacher_indate=#{teacherIndate},
+</if>
+<if test="teacherDuty!=null and teacherDuty!=''">
+teacher_duty=#{teacherDuty},
+</if>
+</trim>
+WHERE teacher_id=#{iD}
+</update>
+
+<!-- 查找
+教师信表:教师入职日期
+详细信息表：出生年月日  ， 性别  ，  email ，  tel  ， 姓名
+账号表：密码，账号类型
+-->
+<resultMap id="teacherResultMap" type="teacher">
+<id column="teacher_id" property="iD" />
+<result column="teacher_indate" property="teacherIndate" />
+<result column="teacher_duty" property="teacherDuty" />
+<association property="userInfo" javaType="com.example.entity.UserInfo">
+<id property="iD" column="userinfo_id"/>
+<result property="userBirth" column="userinfo_birth"/>
+<result property="userName" column="userinfo_name"/>
+<result property="userSex" column="userinfo_sex"/>
+<result property="userEmail" column="userinfo_email"/>
+<result property="userTel" column="userinfo_tel"/>
+<association property="user" javaType="com.example.entity.User">
+<id column="user_id" property="iD"/>
+<result column="user_password" property="userPassword"/>
+<result column="user_type" property="userType"/>
+</association>
+</association>
+</resultMap>
+
+<select id="findTeacherById" parameterType="int" resultMap="teacherResultMap">
+SELECT
+	teacher.teacher_indate,
+	teacher.teacher_id,
+	teacher.teacher_duty,
+	userinfo.userinfo_id,
+	userinfo.userinfo_birth,
+	userinfo.userinfo_email,
+	userinfo.userinfo_name,
+	userinfo.userinfo_sex,
+	userinfo.userinfo_tel,
+	`user`.user_id,
+	`user`.user_password,
+	`user`.user_type
+FROM
+	teacher,
+	userinfo,
+	`user`
+WHERE
+	teacher.userinfo_id = userinfo.userinfo_id
+AND userinfo.user_id = `user` .user_id
+AND teacher_id = #{value}
+</select>
+</mapper>

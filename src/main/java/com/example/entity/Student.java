@@ -33,4 +33,11 @@ public class Student {
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
     }
+
+	@Override
+	public String toString() {
+		return "["+id+","+studentIndate+","+userInfo+"]";
+	}
+    
+    
 }

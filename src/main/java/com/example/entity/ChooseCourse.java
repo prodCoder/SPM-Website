@@ -6,7 +6,13 @@ public class ChooseCourse {
     private Course course;
     private Student student;
 
-    public Integer getiD() {
+    @Override
+	public String toString() {
+		
+		return "["+iD+","+course+","+student+"]";
+	}
+
+	public Integer getiD() {
         return iD;
     }
 

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.StudentMapper">
+
+<!--添加学生记录-->
+<insert id="insertStudent" parameterType="student">
+INSERT INTO student(student_id,student_indate,userinfo_id) VALUES(#{id},#{studentIndate},#{userInfo.iD})
+</insert>
+
+<!-- 删除学生记录 -->
+<delete id="deleteStudentById" parameterType="int">
+DELETE FROM student where student_id=#{value}
+</delete>
+
+<!-- 修改学生信息 -->
+<update id="updateStudent" parameterType="student">
+UPDATE student 
+<trim prefix="SET" suffixOverrides=",">
+<if test="studentIndate!=null and studentIndate!=''">
+student_indate=#{studentIndate},
+</if>
+</trim>
+WHERE student_id=#{id}
+</update>
+
+<!-- 查找
+学生信表:学生入学日期
+详细信息表：出生年月日  ， 性别  ，  email ，  tel  ， 姓名
+账号表：密码，账号类型
+-->
+<resultMap id="studentResultMap" type="student">
+<id column="student_id" property="id" />
+<result column="student_indate" property="studentIndate" />
+<association property="userInfo" javaType="com.example.entity.UserInfo">
+<id property="iD" column="userinfo_id"/>
+<result property="userBirth" column="userinfo_birth"/>
+<result property="userName" column="userinfo_name"/>
+<result property="userSex" column="userinfo_sex"/>
+<result property="userEmail" column="userinfo_email"/>
+<result property="userTel" column="userinfo_tel"/>
+<association property="user" javaType="com.example.entity.User">
+<id column="user_id" property="iD"/>
+<result column="user_password" property="userPassword"/>
+<result column="user_type" property="userType"/>
+</association>
+</association>
+</resultMap>
+
+
+<select id="findStudentById" parameterType="int" resultMap="studentResultMap">
+select 
+student.student_indate,student.student_id,
+ userinfo.userinfo_id,
+ userinfo.userinfo_birth,
+ userinfo.userinfo_email,
+ userinfo.userinfo_name,
+ userinfo.userinfo_sex,
+ userinfo.userinfo_tel,
+ `user`.user_id,
+ `user`.user_password,
+ `user`.user_type
+from 
+student,userinfo,user
+where 
+student.userinfo_id=userinfo.userinfo_id
+and userinfo.user_id=user.user_id 
+and student_id=#{value}
+</select>
+</mapper>
